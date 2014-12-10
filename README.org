@@ -1,0 +1,10 @@
+Run like
+
+#+BEGIN_SRC sh
+xsltproc --stringparam r2l no  blds2lttoolbox.xsl blds-lol-wat.xml > apertium-lol-wat.lol-wat.dix
+
+xsltproc --stringparam r2l yes blds2lttoolbox.xsl blds-wat-lol.xml > apertium-lol-wat.lol-wat.dix
+#+END_SRC
+
+If the parameter =r2l= is =yes=, we flip the contents of =<l>= and =<r>=.
+
