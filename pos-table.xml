@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- http://www.ibm.com/developerworks/library/x-xsltip.html -->
+<posdefs>
+ <pos-pair><blds>verb</blds>        <apertium>vblex</apertium></pos-pair>
+ <pos-pair><blds>adjective</blds>   <apertium>adj</apertium></pos-pair>
+ <pos-pair><blds>adverb</blds>      <apertium>adv</apertium></pos-pair>
+ <pos-pair><blds>noun</blds>        <apertium>n</apertium></pos-pair>
+ <pos-pair><blds>preposition</blds> <apertium>pr</apertium></pos-pair>
+ <pos-pair><blds>interjection</blds><apertium>ij</apertium></pos-pair>
+ <pos-pair><blds>conjunction</blds><apertium>cnjcoo</apertium></pos-pair>
+ <pos-pair><blds>pronoun</blds><apertium>prn</apertium></pos-pair>
+ <pos-pair><blds>numeral</blds><apertium>det</apertium></pos-pair> <!--TODO: det.dem -->
+ <pos-pair><blds>article</blds><apertium>det</apertium></pos-pair> <!--TODO: det.qnt -->
+ <pos-pair><blds>abbreviation</blds><apertium>acr</apertium></pos-pair>
+ <pos-pair><blds>notPredefined</blds><apertium>TODO</apertium></pos-pair>
+</posdefs>

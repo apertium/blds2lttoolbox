@@ -13,6 +13,22 @@
 
 <xsl:param name="r2l"/>
 
+<xsl:key name="pos-lookup" match="pos-pair" use="blds"/>
+<xsl:variable name="pos-table" select="document('pos-table.xml')/posdefs"/>
+
+<xsl:template match="posdefs">  
+  <!-- for matching the root of pos-table.xml -->
+  <xsl:param name="blds-pos"/>
+  <xsl:choose>
+    <xsl:when test="key('pos-lookup', $blds-pos)">
+      <xsl:value-of select="key('pos-lookup', $blds-pos)/apertium"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$blds-pos"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <xsl:template match="Dictionary">
   <dictionary>
     <alphabet/>
@@ -80,6 +96,7 @@
       <sdef n="clb" 	c="Possible clause boundary"/>
       <sdef n="lpar" 	c="Left parenthesis"/>
       <sdef n="rpar" 	c="Right parenthesis"/>
+      <sdef n="TODO" 	c="Unknown part-of-speech"/>
     </sdefs>
     <pardefs/>
 
@@ -91,18 +108,36 @@
 
 <!-- fall-through NestEntry -->
 <xsl:template match="DictionaryEntry">
+  <xsl:variable name="pos-value">
+    <xsl:choose>
+      <xsl:when test="HeadwordCtn/PartOfSpeech/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="HeadwordCtn/PartOfSpeech/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:when test="HeadwordBlock/PartOfSpeech/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="HeadwordBlock/PartOfSpeech/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <!-- Some not-yet-handled node structure: -->
+      <xsl:otherwise>TODO</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
   <xsl:choose>
     <xsl:when test=".//Translation">
       <xsl:apply-templates>
         <xsl:with-param name="pos">
           <xsl:element name="s">
             <xsl:attribute name="n">
-              <xsl:value-of select="HeadwordCtn/PartOfSpeech/@value"/>
+              <xsl:copy-of select="$pos-value"/>
             </xsl:attribute>
           </xsl:element>
         </xsl:with-param>
         <xsl:with-param name="headword">
           <xsl:copy-of select="HeadwordCtn/Headword/text()"/>
+          <!-- TODO: for-each HeadwordBlock, GrammaticalGender as pos2 -->
         </xsl:with-param>
       </xsl:apply-templates>
     </xsl:when>
