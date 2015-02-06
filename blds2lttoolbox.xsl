@@ -16,15 +16,19 @@
 <xsl:key name="pos-lookup" match="pos-pair" use="blds"/>
 <xsl:variable name="pos-table" select="document('pos-table.xml')/posdefs"/>
 
-<xsl:template match="posdefs">  
+<xsl:template match="posdefs">
   <!-- for matching the root of pos-table.xml -->
   <xsl:param name="blds-pos"/>
   <xsl:choose>
     <xsl:when test="key('pos-lookup', $blds-pos)">
-      <xsl:value-of select="key('pos-lookup', $blds-pos)/apertium"/>
+      <xsl:copy-of select="key('pos-lookup', $blds-pos)/apertium/s"/>
     </xsl:when>
     <xsl:otherwise>
-      <xsl:value-of select="$blds-pos"/>
+      <xsl:element name="s">
+        <xsl:attribute name="n">
+          <xsl:value-of select="$blds-pos"/>
+        </xsl:attribute>
+      </xsl:element>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
@@ -121,7 +125,7 @@
         </xsl:apply-templates>
       </xsl:when>
       <!-- Some not-yet-handled node structure: -->
-      <xsl:otherwise>TODO</xsl:otherwise>
+      <xsl:otherwise><s n="TODO"/></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
 
@@ -129,11 +133,7 @@
     <xsl:when test=".//Translation">
       <xsl:apply-templates>
         <xsl:with-param name="pos">
-          <xsl:element name="s">
-            <xsl:attribute name="n">
-              <xsl:copy-of select="$pos-value"/>
-            </xsl:attribute>
-          </xsl:element>
+          <xsl:copy-of select="$pos-value"/>
         </xsl:with-param>
         <xsl:with-param name="headword">
           <xsl:copy-of select="HeadwordCtn/Headword/text()"/>
