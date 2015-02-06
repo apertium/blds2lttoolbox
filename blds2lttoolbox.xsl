@@ -162,6 +162,23 @@
 <xsl:template match="Display"/>
 <xsl:template match="Pronunciation"/>
 
+<xsl:template name="replace-space">
+  <xsl:param name="text"/>
+  <xsl:choose>
+    <xsl:when test="contains($text,' ')">
+      <xsl:value-of select="substring-before($text,' ')"/>
+      <b/>
+      <xsl:call-template name="replace-space">
+        <xsl:with-param name="text"
+                        select="substring-after($text,' ')"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$text"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <xsl:template name="lt_e_helper">
   <xsl:param name="pos"/>
   <xsl:param name="lword"/>
@@ -169,11 +186,15 @@
   <e>
     <p>
       <l>
-        <xsl:copy-of select="$lword"/>
+        <xsl:call-template name="replace-space">
+          <xsl:with-param name="text" select="$lword"/>
+        </xsl:call-template>
         <xsl:copy-of select="$pos"/>
       </l>
       <r>
-        <xsl:copy-of select="$rword"/>
+        <xsl:call-template name="replace-space">
+          <xsl:with-param name="text" select="$rword"/>
+        </xsl:call-template>
         <xsl:copy-of select="$pos"/>
       </r>
     </p>
