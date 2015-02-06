@@ -137,7 +137,7 @@
         </xsl:with-param>
         <xsl:with-param name="headword">
           <xsl:copy-of select="HeadwordCtn/Headword/text()"/>
-          <!-- TODO: for-each HeadwordBlock, GrammaticalGender as pos2 -->
+          <!-- TODO: for-each HeadwordBlock/TranslationCtn, GrammaticalGender as pos2 -->
         </xsl:with-param>
       </xsl:apply-templates>
     </xsl:when>

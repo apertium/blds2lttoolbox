@@ -2,39 +2,55 @@
 <!-- http://www.ibm.com/developerworks/library/x-xsltip.html -->
 <posdefs>
   <pos-pair>
-    <blds>verb</blds>          <apertium><s n="vblex"/></apertium>
+    <blds>verb</blds>               <apertium><s n="vblex"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>adjective</blds>     <apertium><s n="adj"/></apertium>
+    <blds>adjective</blds>          <apertium><s n="adj"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>adverb</blds>        <apertium><s n="adv"/></apertium>
+    <blds>adverb</blds>             <apertium><s n="adv"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>noun</blds>          <apertium><s n="n"/></apertium>
+    <blds>noun</blds>               <apertium><s n="n"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>preposition</blds>   <apertium><s n="pr"/></apertium>
+    <blds>preposition</blds>        <apertium><s n="pr"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>interjection</blds>  <apertium><s n="ij"/></apertium>
+    <blds>interjection</blds>       <apertium><s n="ij"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>conjunction</blds>   <apertium><s n="cnjcoo"/></apertium>
+    <blds>conjunction</blds>        <apertium><s n="cnjcoo"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>pronoun</blds>       <apertium><s n="prn"/></apertium>
+    <blds>pronoun</blds>            <apertium><s n="prn"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>numeral</blds>       <apertium><s n="det"/><s n="dem"/></apertium>
+    <blds>numeral</blds>            <apertium><s n="det"/><s n="dem"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>article</blds>       <apertium><s n="det"/><s n="qnt"/></apertium>
+    <blds>article</blds>            <apertium><s n="det"/><s n="qnt"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>abbreviation</blds>  <apertium><s n="acr"/></apertium>
+    <blds>abbreviation</blds>       <apertium><s n="acr"/></apertium>
   </pos-pair>
   <pos-pair>
-    <blds>notPredefined</blds> <apertium><s n="TODO"/></apertium>
+    <blds>notPredefined</blds>      <apertium><s n="TODO"/></apertium>
+  </pos-pair>
+  <!-- GrammaticalGender: -->
+  <pos-pair>
+    <blds>masculine-feminine</blds> <apertium><s n="mf"/></apertium>
+  </pos-pair>
+  <pos-pair>
+    <blds>masculine-feminine-neuter</blds><apertium><s n="mfn"/></apertium>
+  </pos-pair>
+  <pos-pair>
+    <blds>feminine</blds>           <apertium><s n="f"/></apertium>
+  </pos-pair>
+  <pos-pair>
+    <blds>masculine</blds>          <apertium><s n="m"/></apertium>
+  </pos-pair>
+  <pos-pair>
+    <blds>neuter</blds>             <apertium><s n="nt"/></apertium>
   </pos-pair>
 </posdefs>
