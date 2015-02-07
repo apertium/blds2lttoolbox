@@ -112,22 +112,12 @@
 </xsl:template>
 
 <!-- fall-through NestEntry -->
-<xsl:template match="DictionaryEntry">
+<xsl:template match="DictionaryEntry/HeadwordCtn">
   <xsl:variable name="pos">
     <xsl:choose>
-      <xsl:when test="HeadwordCtn/PartOfSpeech/@value">
+      <xsl:when test=".//PartOfSpeech/@value">
         <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select="HeadwordCtn/PartOfSpeech/@value"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:when test="HeadwordCtn/PartOfSpeechCtn/PartOfSpeech/@value">
-        <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select="HeadwordCtn/PartOfSpeechCtn/PartOfSpeech/@value"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:when test="HeadwordBlock/PartOfSpeech/@value">
-        <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select="HeadwordBlock/PartOfSpeech/@value"/>
+          <xsl:with-param name="blds-pos" select=".//PartOfSpeech/@value"/>
         </xsl:apply-templates>
       </xsl:when>
       <!-- Some not-yet-handled node structure: -->
@@ -137,14 +127,9 @@
 
   <xsl:variable name="headgender">
     <xsl:choose>
-      <xsl:when test="HeadwordCtn/GrammaticalGender/@value">
+      <xsl:when test=".//GrammaticalGender/@value">
         <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select="HeadwordCtn/GrammaticalGender/@value"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:when test="HeadwordBlock/GrammaticalGender/@value">
-        <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select="HeadwordBlock/GrammaticalGender/@value"/>
+          <xsl:with-param name="blds-pos" select=".//GrammaticalGender/@value"/>
         </xsl:apply-templates>
       </xsl:when>
       <!-- Not set, no tag: -->
@@ -154,32 +139,102 @@
 
   <xsl:variable name="headword">
     <xsl:choose>
-      <xsl:when test=".//HeadwordCtn/Headword/text()">
-        <xsl:copy-of select=".//HeadwordCtn/Headword/text()"/>
+      <xsl:when test=".//Headword/text()">
+        <xsl:copy-of select=".//Headword/text()"/>
       </xsl:when>
       <xsl:otherwise>TODO</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
 
-  <xsl:choose>
-    <xsl:when test=".//Translation">
-      <xsl:apply-templates>
-        <xsl:with-param name="pos">
-          <xsl:copy-of select="$pos"/>
-        </xsl:with-param>
-        <xsl:with-param name="headgender">
-          <xsl:copy-of select="$headgender"/>
-        </xsl:with-param>
-        <xsl:with-param name="headword">
-          <xsl:copy-of select="$headword"/>
-        </xsl:with-param>
-      </xsl:apply-templates>
-    </xsl:when>
-  </xsl:choose>
+  <xsl:apply-templates select="..//Translation">
+    <xsl:with-param name="pos">
+      <xsl:copy-of select="$pos"/>
+    </xsl:with-param>
+    <xsl:with-param name="headgender">
+      <xsl:copy-of select="$headgender"/>
+    </xsl:with-param>
+    <xsl:with-param name="headword">
+      <xsl:copy-of select="$headword"/>
+    </xsl:with-param>
+  </xsl:apply-templates>
+  <xsl:apply-templates select="..//Synonym">
+    <xsl:with-param name="pos">
+      <xsl:copy-of select="$pos"/>
+    </xsl:with-param>
+    <xsl:with-param name="headgender">
+      <xsl:copy-of select="$headgender"/>
+    </xsl:with-param>
+  </xsl:apply-templates>
+</xsl:template>
+
+<xsl:template match="DictionaryEntry/HeadwordBlock/HeadwordCtn">
+  <xsl:variable name="pos">
+    <xsl:choose>
+      <xsl:when test=".//PartOfSpeech/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select=".//PartOfSpeech/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:when test="..//PartOfSpeech/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="..//PartOfSpeech/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <!-- Some not-yet-handled node structure: -->
+      <xsl:otherwise><s n="TODO"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:variable name="headgender">
+    <xsl:choose>
+      <xsl:when test=".//GrammaticalGender/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select=".//GrammaticalGender/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:when test="..//GrammaticalGender/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="..//GrammaticalGender/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <!-- Not set, no tag: -->
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:variable name="headword">
+    <xsl:choose>
+      <xsl:when test=".//Headword/text()">
+        <xsl:copy-of select=".//Headword/text()"/>
+      </xsl:when>
+      <xsl:otherwise>TODO</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:apply-templates select="../..//Translation">
+    <xsl:with-param name="pos">
+      <xsl:copy-of select="$pos"/>
+    </xsl:with-param>
+    <xsl:with-param name="headgender">
+      <xsl:copy-of select="$headgender"/>
+    </xsl:with-param>
+    <xsl:with-param name="headword">
+      <xsl:copy-of select="$headword"/>
+    </xsl:with-param>
+  </xsl:apply-templates>
+  <xsl:apply-templates select="../..//Synonym">
+    <xsl:with-param name="pos">
+      <xsl:copy-of select="$pos"/>
+    </xsl:with-param>
+    <xsl:with-param name="headgender">
+      <xsl:copy-of select="$headgender"/>
+    </xsl:with-param>
+  </xsl:apply-templates>
 </xsl:template>
 
 <!-- skip these: -->
-<xsl:template match="HeadwordCtn"/>
+<xsl:template match="SenseBlock"/>
+<xsl:template match="SenseGrp"/>
 <xsl:template match="CompositionalPhraseCtn"/> <!-- would be nice, but no -->
 <xsl:template match="SenseIndicator"/>
 <xsl:template match="Definition"/>
@@ -301,11 +356,9 @@
   </xsl:choose>
 </xsl:template>
 
-<!-- fall-through SenseGrp -->
 <xsl:template match="Synonym">
   <xsl:param name="pos"/>
   <xsl:param name="headgender"/>
-  <xsl:param name="headword"/> <!-- ignored (using text() instead) -->
 
   <xsl:choose>
     <xsl:when test="..//Translation">
