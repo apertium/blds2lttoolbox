@@ -13,6 +13,11 @@
 
 <xsl:param name="r2l"/>
 
+<!--
+    To get an overview of XML structure possibilities, try running
+    $ xmlstarlet el blds-file.xml | sort -u
+-->
+
 <xsl:key name="pos-lookup" match="pos-pair" use="blds"/>
 <xsl:variable name="pos-table" select="document('pos-table.xml')/posdefs"/>
 
@@ -112,62 +117,61 @@
 </xsl:template>
 
 <!-- fall-through NestEntry -->
-<xsl:template match="DictionaryEntry/HeadwordCtn">
-  <xsl:variable name="pos">
-    <xsl:choose>
-      <xsl:when test=".//PartOfSpeech/@value">
-        <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select=".//PartOfSpeech/@value"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <!-- Some not-yet-handled node structure: -->
-      <xsl:otherwise><s n="TODO"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
 
-  <xsl:variable name="headgender">
-    <xsl:choose>
-      <xsl:when test=".//GrammaticalGender/@value">
-        <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select=".//GrammaticalGender/@value"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <!-- Not set, no tag: -->
-      <xsl:otherwise></xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
+<xsl:template match="DictionaryEntry">
+  <xsl:apply-templates>
+    <xsl:with-param name="pos"><s n="TODO"/></xsl:with-param>
+    <xsl:with-param name="headgender"></xsl:with-param>
+    <xsl:with-param name="headword">TODO</xsl:with-param>
+  </xsl:apply-templates>
+</xsl:template>
 
-  <xsl:variable name="headword">
-    <xsl:choose>
-      <xsl:when test=".//Headword/text()">
-        <xsl:copy-of select=".//Headword/text()"/>
-      </xsl:when>
-      <xsl:otherwise>TODO</xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-
-  <xsl:apply-templates select="..//Translation">
+<xsl:template match="DictionaryEntry/HeadwordBlock">
+  <!-- pos/gender may come from HeadwordBlock, or be specified within
+       each HeadwordCtn-->
+  <xsl:apply-templates select="./HeadwordCtn">
     <xsl:with-param name="pos">
-      <xsl:copy-of select="$pos"/>
+      <xsl:choose>
+        <xsl:when test="./PartOfSpeech/@value">
+          <xsl:apply-templates select="$pos-table">
+            <xsl:with-param name="blds-pos" select="./PartOfSpeech/@value"/>
+          </xsl:apply-templates>
+        </xsl:when>
+        <xsl:when test="./PartOfSpeechCtn/PartOfSpeech/@value">
+          <xsl:apply-templates select="$pos-table">
+            <xsl:with-param name="blds-pos" select="./PartOfSpeechCtn/PartOfSpeech/@value"/>
+          </xsl:apply-templates>
+        </xsl:when>
+        <xsl:otherwise><s n="TODO"/></xsl:otherwise>
+      </xsl:choose>
     </xsl:with-param>
     <xsl:with-param name="headgender">
-      <xsl:copy-of select="$headgender"/>
+      <xsl:choose>
+        <xsl:when test="./GrammaticalGender/@value">
+          <xsl:apply-templates select="$pos-table">
+            <xsl:with-param name="blds-pos" select="./GrammaticalGender/@value"/>
+          </xsl:apply-templates>
+        </xsl:when>
+        <!-- Not set, no tag: -->
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
     </xsl:with-param>
     <xsl:with-param name="headword">
-      <xsl:copy-of select="$headword"/>
-    </xsl:with-param>
-  </xsl:apply-templates>
-  <xsl:apply-templates select="..//Synonym">
-    <xsl:with-param name="pos">
-      <xsl:copy-of select="$pos"/>
-    </xsl:with-param>
-    <xsl:with-param name="headgender">
-      <xsl:copy-of select="$headgender"/>
+      <xsl:choose>
+        <xsl:when test="./Headword/text()">
+          <xsl:copy-of select="./Headword/text()"/>
+        </xsl:when>
+        <xsl:otherwise>TODO</xsl:otherwise>
+      </xsl:choose>
     </xsl:with-param>
   </xsl:apply-templates>
 </xsl:template>
 
-<xsl:template match="DictionaryEntry/HeadwordBlock/HeadwordCtn">
+<xsl:template match="HeadwordCtn">
+  <xsl:param name="pos"/>
+  <xsl:param name="headgender"/>
+  <xsl:param name="headword"/>
+
   <xsl:variable name="pos">
     <xsl:choose>
       <xsl:when test=".//PartOfSpeech/@value">
@@ -175,13 +179,9 @@
           <xsl:with-param name="blds-pos" select=".//PartOfSpeech/@value"/>
         </xsl:apply-templates>
       </xsl:when>
-      <xsl:when test="..//PartOfSpeech/@value">
-        <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select="..//PartOfSpeech/@value"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <!-- Some not-yet-handled node structure: -->
-      <xsl:otherwise><s n="TODO"/></xsl:otherwise>
+      <xsl:otherwise>
+        <xsl:copy-of select="$pos"/>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
 
@@ -192,13 +192,9 @@
           <xsl:with-param name="blds-pos" select=".//GrammaticalGender/@value"/>
         </xsl:apply-templates>
       </xsl:when>
-      <xsl:when test="..//GrammaticalGender/@value">
-        <xsl:apply-templates select="$pos-table">
-          <xsl:with-param name="blds-pos" select="..//GrammaticalGender/@value"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <!-- Not set, no tag: -->
-      <xsl:otherwise></xsl:otherwise>
+      <xsl:otherwise>
+        <xsl:copy-of select="$headgender"/>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
 
@@ -207,29 +203,57 @@
       <xsl:when test=".//Headword/text()">
         <xsl:copy-of select=".//Headword/text()"/>
       </xsl:when>
-      <xsl:otherwise>TODO</xsl:otherwise>
+      <xsl:otherwise>
+        <xsl:copy-of select="$headword"/>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
 
-  <xsl:apply-templates select="../..//Translation">
-    <xsl:with-param name="pos">
-      <xsl:copy-of select="$pos"/>
-    </xsl:with-param>
-    <xsl:with-param name="headgender">
-      <xsl:copy-of select="$headgender"/>
-    </xsl:with-param>
-    <xsl:with-param name="headword">
-      <xsl:copy-of select="$headword"/>
-    </xsl:with-param>
-  </xsl:apply-templates>
-  <xsl:apply-templates select="../..//Synonym">
-    <xsl:with-param name="pos">
-      <xsl:copy-of select="$pos"/>
-    </xsl:with-param>
-    <xsl:with-param name="headgender">
-      <xsl:copy-of select="$headgender"/>
-    </xsl:with-param>
-  </xsl:apply-templates>
+  <xsl:choose>
+    <xsl:when test="parent::HeadwordBlock">
+      <xsl:apply-templates select="../..//Translation">
+        <xsl:with-param name="pos">
+          <xsl:copy-of select="$pos"/>
+        </xsl:with-param>
+        <xsl:with-param name="headgender">
+          <xsl:copy-of select="$headgender"/>
+        </xsl:with-param>
+        <xsl:with-param name="headword">
+          <xsl:copy-of select="$headword"/>
+        </xsl:with-param>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="../..//Synonym">
+        <xsl:with-param name="pos">
+          <xsl:copy-of select="$pos"/>
+        </xsl:with-param>
+        <xsl:with-param name="headgender">
+          <xsl:copy-of select="$headgender"/>
+        </xsl:with-param>
+      </xsl:apply-templates>
+    </xsl:when>
+
+    <xsl:otherwise>
+      <xsl:apply-templates select="..//Translation">
+        <xsl:with-param name="pos">
+          <xsl:copy-of select="$pos"/>
+        </xsl:with-param>
+        <xsl:with-param name="headgender">
+          <xsl:copy-of select="$headgender"/>
+        </xsl:with-param>
+        <xsl:with-param name="headword">
+          <xsl:copy-of select="$headword"/>
+        </xsl:with-param>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="..//Synonym">
+        <xsl:with-param name="pos">
+          <xsl:copy-of select="$pos"/>
+        </xsl:with-param>
+        <xsl:with-param name="headgender">
+          <xsl:copy-of select="$headgender"/>
+        </xsl:with-param>
+      </xsl:apply-templates>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!-- skip these: -->
