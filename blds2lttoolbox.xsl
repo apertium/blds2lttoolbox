@@ -149,7 +149,7 @@
 
   <xsl:variable name="headword">
     <xsl:choose>
-      <xsl:when test=".//HeadwordCtn/GrammaticalGender/@value">
+      <xsl:when test=".//HeadwordCtn/Headword/text()">
         <xsl:copy-of select=".//HeadwordCtn/Headword/text()"/>
       </xsl:when>
       <xsl:otherwise>TODO</xsl:otherwise>
