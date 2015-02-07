@@ -112,7 +112,7 @@
 
 <!-- fall-through NestEntry -->
 <xsl:template match="DictionaryEntry">
-  <xsl:variable name="pos-value">
+  <xsl:variable name="pos">
     <xsl:choose>
       <xsl:when test="HeadwordCtn/PartOfSpeech/@value">
         <xsl:apply-templates select="$pos-table">
@@ -146,17 +146,26 @@
     </xsl:choose>
   </xsl:variable>
 
+  <xsl:variable name="headword">
+    <xsl:choose>
+      <xsl:when test=".//HeadwordCtn/GrammaticalGender/@value">
+        <xsl:copy-of select=".//HeadwordCtn/Headword/text()"/>
+      </xsl:when>
+      <xsl:otherwise>TODO</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
   <xsl:choose>
     <xsl:when test=".//Translation">
       <xsl:apply-templates>
         <xsl:with-param name="pos">
-          <xsl:copy-of select="$pos-value"/>
+          <xsl:copy-of select="$pos"/>
         </xsl:with-param>
         <xsl:with-param name="headgender">
           <xsl:copy-of select="$headgender"/>
         </xsl:with-param>
         <xsl:with-param name="headword">
-          <xsl:copy-of select="HeadwordCtn/Headword/text()"/>
+          <xsl:copy-of select="$headword"/>
         </xsl:with-param>
       </xsl:apply-templates>
     </xsl:when>
@@ -208,14 +217,14 @@
     <p>
       <l>
         <xsl:call-template name="replace-space">
-          <xsl:with-param name="text" select="$lword"/>
+          <xsl:with-param name="text" select="normalize-space($lword)"/>
         </xsl:call-template>
         <xsl:copy-of select="$pos"/>
         <xsl:copy-of select="$lgender"/>
       </l>
       <r>
         <xsl:call-template name="replace-space">
-          <xsl:with-param name="text" select="$rword"/>
+          <xsl:with-param name="text" select="normalize-space($rword)"/>
         </xsl:call-template>
         <xsl:copy-of select="$pos"/>
         <xsl:copy-of select="$rgender"/>
