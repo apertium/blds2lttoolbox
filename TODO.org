@@ -1,7 +1,3 @@
-* TODO for-each HeadwordCtn/TranslationCtn, GrammaticalGender as pos2
-(Also exist on HeadwordBlock/InflectionCtn, but those look more like
-monodix-info.)
-
 * TODO comma-separated headwords :(
 Things like
 : <Headword>adkomst, atkomst</Headword>

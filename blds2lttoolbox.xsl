@@ -129,15 +129,34 @@
     </xsl:choose>
   </xsl:variable>
 
+  <xsl:variable name="headgender">
+    <xsl:choose>
+      <xsl:when test="HeadwordCtn/GrammaticalGender/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="HeadwordCtn/GrammaticalGender/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:when test="HeadwordBlock/GrammaticalGender/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="HeadwordBlock/GrammaticalGender/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <!-- Not set, no tag: -->
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
   <xsl:choose>
     <xsl:when test=".//Translation">
       <xsl:apply-templates>
         <xsl:with-param name="pos">
           <xsl:copy-of select="$pos-value"/>
         </xsl:with-param>
+        <xsl:with-param name="headgender">
+          <xsl:copy-of select="$headgender"/>
+        </xsl:with-param>
         <xsl:with-param name="headword">
           <xsl:copy-of select="HeadwordCtn/Headword/text()"/>
-          <!-- TODO: for-each HeadwordBlock/TranslationCtn, GrammaticalGender as pos2 -->
         </xsl:with-param>
       </xsl:apply-templates>
     </xsl:when>
@@ -182,7 +201,9 @@
 <xsl:template name="lt_e_helper">
   <xsl:param name="pos"/>
   <xsl:param name="lword"/>
+  <xsl:param name="lgender"/>
   <xsl:param name="rword"/>
+  <xsl:param name="rgender"/>
   <e>
     <p>
       <l>
@@ -190,12 +211,14 @@
           <xsl:with-param name="text" select="$lword"/>
         </xsl:call-template>
         <xsl:copy-of select="$pos"/>
+        <xsl:copy-of select="$lgender"/>
       </l>
       <r>
         <xsl:call-template name="replace-space">
           <xsl:with-param name="text" select="$rword"/>
         </xsl:call-template>
         <xsl:copy-of select="$pos"/>
+        <xsl:copy-of select="$rgender"/>
       </r>
     </p>
   </e>
@@ -204,21 +227,27 @@
 <xsl:template name="lt_e">
   <xsl:param name="pos"/>
   <xsl:param name="lword"/>
+  <xsl:param name="lgender"/>
   <xsl:param name="rword"/>
+  <xsl:param name="rgender"/>
   <xsl:choose>
     <xsl:when test="not($r2l=string('yes'))">
       <xsl:call-template name="lt_e_helper">
-        <xsl:with-param name="pos" select="$pos"/>
-        <xsl:with-param name="lword" select="$lword"/>
-        <xsl:with-param name="rword" select="$rword"/>
+        <xsl:with-param name="pos"     select="$pos"/>
+        <xsl:with-param name="lword"   select="$lword"/>
+        <xsl:with-param name="lgender" select="$lgender"/>
+        <xsl:with-param name="rword"   select="$rword"/>
+        <xsl:with-param name="rgender" select="$rgender"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:otherwise>
       <!-- flip r and l here: -->
       <xsl:call-template name="lt_e_helper">
-        <xsl:with-param name="pos" select="$pos"/>
-        <xsl:with-param name="lword" select="$rword"/>
-        <xsl:with-param name="rword" select="$lword"/>
+        <xsl:with-param name="pos"     select="$pos"/>
+        <xsl:with-param name="lword"   select="$rword"/>
+        <xsl:with-param name="lgender" select="$rgender"/>
+        <xsl:with-param name="rword"   select="$lword"/>
+        <xsl:with-param name="rgender" select="$lgender"/>
       </xsl:call-template>
     </xsl:otherwise>
   </xsl:choose>
@@ -227,23 +256,58 @@
 <!-- fall-through TranslationBlock and TranslationCtn -->
 <xsl:template match="Translation">
   <xsl:param name="pos"/>
+  <xsl:param name="headgender"/>
   <xsl:param name="headword"/>
-  <xsl:call-template name="lt_e">
-    <xsl:with-param name="pos" select="$pos"/>
-    <xsl:with-param name="lword" select="$headword"/>
-    <xsl:with-param name="rword" select="text()"/>
-  </xsl:call-template>
+  <xsl:variable name="trgender">
+    <xsl:choose>
+      <xsl:when test="../GrammaticalGender/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="../GrammaticalGender/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <!-- Not set, no tag: -->
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:choose>
+    <!-- Skip translatoins of example sentences.
+         TODO: also skip CompositionalPhraseCtn? -->
+    <xsl:when test="ancestor::ExampleCtn or ancestor::CompositionalPhraseCtn">
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:call-template name="lt_e">
+        <xsl:with-param name="pos" select="$pos"/>
+        <xsl:with-param name="lword" select="$headword"/>
+        <xsl:with-param name="lgender" select="$headgender"/>
+        <xsl:with-param name="rword" select="text()"/>
+        <xsl:with-param name="rgender" select="$trgender"/>
+      </xsl:call-template>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!-- fall-through SenseGrp -->
 <xsl:template match="Synonym">
   <xsl:param name="pos"/>
+  <xsl:param name="headgender"/>
   <xsl:param name="headword"/> <!-- ignored (using text() instead) -->
-  <xsl:call-template name="lt_e">
-    <xsl:with-param name="pos" select="$pos"/>
-    <xsl:with-param name="lword" select="text()"/>
-    <xsl:with-param name="rword" select="../Translation/text()"/>
-  </xsl:call-template>
+
+  <xsl:choose>
+    <xsl:when test="..//Translation">
+      <xsl:apply-templates select="..//Translation">
+        <xsl:with-param name="pos">
+          <xsl:copy-of select="$pos"/>
+        </xsl:with-param>
+        <xsl:with-param name="headgender">
+          <xsl:copy-of select="$headgender"/>
+        </xsl:with-param>
+        <xsl:with-param name="headword">
+          <xsl:copy-of select="text()"/>
+        </xsl:with-param>
+      </xsl:apply-templates>
+    </xsl:when>
+  </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
