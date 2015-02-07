@@ -280,8 +280,7 @@
   </xsl:variable>
 
   <xsl:choose>
-    <!-- Skip translatoins of example sentences.
-         TODO: also skip CompositionalPhraseCtn? -->
+    <!-- Skip translations of example sentences, or phrases not useful for MT -->
     <xsl:when test="ancestor::ExampleCtn or ancestor::CompositionalPhraseCtn">
     </xsl:when>
     <xsl:otherwise>
