@@ -39,10 +39,19 @@
   </pos-pair>
   <!-- GrammaticalGender: -->
   <pos-pair>
+    <blds>feminine-masculine</blds> <apertium><s n="mf"/></apertium>
+  </pos-pair>
+  <pos-pair>
     <blds>masculine-feminine</blds> <apertium><s n="mf"/></apertium>
   </pos-pair>
   <pos-pair>
     <blds>masculine-feminine-neuter</blds><apertium><s n="mfn"/></apertium>
+  </pos-pair>
+  <pos-pair>
+    <blds>feminine-neuter</blds>    <apertium><s n="fn"/></apertium>
+  </pos-pair>
+  <pos-pair>
+    <blds>masculine-neuter</blds>   <apertium><s n="mn"/></apertium>
   </pos-pair>
   <pos-pair>
     <blds>feminine</blds>           <apertium><s n="f"/></apertium>

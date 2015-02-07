@@ -51,6 +51,8 @@
       <sdef n="p3" 	c="3rd person"/>
       <sdef n="nt" 	c="Neuter"/>
       <sdef n="mf" 	c="Masculine / feminine, also utrum in nouns"/>
+      <sdef n="mfn" 	c="Masculine / feminine / neuter"/>
+      <sdef n="mn" 	c="Masculine / neuter"/>
       <sdef n="f" 	c="Feminine"/>
       <sdef n="m" 	c="Masculine"/>
       <sdef n="un" 	c="No gender"/>
@@ -102,7 +104,6 @@
       <sdef n="rpar" 	c="Right parenthesis"/>
       <sdef n="TODO" 	c="Unknown part-of-speech"/>
     </sdefs>
-    <pardefs/>
 
     <section id="main" type="standard">
       <xsl:apply-templates/>
