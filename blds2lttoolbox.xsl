@@ -120,6 +120,11 @@
           <xsl:with-param name="blds-pos" select="HeadwordCtn/PartOfSpeech/@value"/>
         </xsl:apply-templates>
       </xsl:when>
+      <xsl:when test="HeadwordCtn/PartOfSpeechCtn/PartOfSpeech/@value">
+        <xsl:apply-templates select="$pos-table">
+          <xsl:with-param name="blds-pos" select="HeadwordCtn/PartOfSpeechCtn/PartOfSpeech/@value"/>
+        </xsl:apply-templates>
+      </xsl:when>
       <xsl:when test="HeadwordBlock/PartOfSpeech/@value">
         <xsl:apply-templates select="$pos-table">
           <xsl:with-param name="blds-pos" select="HeadwordBlock/PartOfSpeech/@value"/>
